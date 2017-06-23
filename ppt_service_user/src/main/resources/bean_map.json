@@ -1,0 +1,28 @@
+{
+
+  "cpmAdminLoginHis":"com.puputuan.model.AdminLoginHis",
+  "cpmFancy":"com.puputuan.model.Fancy",
+  "cpmFancyUser":"com.puputuan.model.FancyUser",
+  "cpmInterest":"com.puputuan.model.Interest",
+  "cpmInterestUser":"com.puputuan.model.InterestUser",
+  "cpmJob":"com.puputuan.model.Job",
+  "cpmJobUser":"com.puputuan.model.JobUser",
+  "cpmUserSuperLike":"com.puputuan.model.UserSuperLike",
+  "cpmUserSuperLikeConfig":"com.puputuan.model.UserSuperLikeConfig",
+
+  "cpdAdmin": "com.puputuan.dao.AdminDAO",
+  "cpdAdminLoginHis":"com.puputuan.dao.AdminLoginHisDAO",
+  "cpdFancy": "com.puputuan.dao.FancyDAO",
+  "cpdFancyUser": "com.puputuan.dao.FancyUserDAO",
+  "cpdInterest": "com.puputuan.dao.InterestDAO",
+  "cpdInterestUser": "com.puputuan.dao.InterestUserDAO",
+  "cpdJob": "com.puputuan.dao.JobDAO",
+  "cpdJobUser": "com.puputuan.dao.JobUserDAO",
+  "cpdUserSetting": "com.puputuan.dao.UserSettingDAO",
+  "cpdUserSuperLikeConfig": "com.puputuan.dao.UserSuperLikeConfigDAO",
+  "cpdUserSuperLike": "com.puputuan.dao.UserSuperLikeDAO",
+
+  "juMap": "java.util.Map"
+}
+
+

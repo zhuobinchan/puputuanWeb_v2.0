@@ -1,0 +1,26 @@
+#myBatis
+mybatis:
+  type-aliases-package: com.puputuan.**.model
+  mapper-locations:  classpath:mybatis-mappers/*.xml
+
+#通用map
+mapper:
+  mappers: com.puputuan.basedao.BaseDAO
+  not-empty: false
+  identity: MYSQL
+
+#分页帮助
+pagehelper:
+  helperDialect: mysql
+  pagehelper.reasonable: true
+  supportMethodsArguments: true
+  offset-as-page-num: true
+  row-bounds-with-count: true
+  page-size-zero: true
+  params: pageNum=start;pageSize=limit;pageSizeZero=zero;reasonable=heli;count=contsql
+
+
+server:
+  port: 9083
+
+

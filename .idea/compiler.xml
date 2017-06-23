@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ppt-app-info" />
+        <module name="ppt-app-video" />
+        <module name="ppt-service-user" />
+        <module name="ppt_app_info" />
+        <module name="ppt_common_client" />
+        <module name="ppt_common_core" />
+        <module name="ppt_common_sms" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ppt-app-info" target="1.8" />
+      <module name="ppt-app-video" target="1.8" />
+      <module name="ppt-service-user" target="1.8" />
+      <module name="ppt_app_info" target="1.8" />
+      <module name="ppt_app_video" target="1.8" />
+      <module name="ppt_common_client" target="1.8" />
+      <module name="ppt_common_core" target="1.8" />
+      <module name="ppt_common_sms" target="1.8" />
+      <module name="ppt_parent_pom" target="1.8" />
+      <module name="ppt_service_user" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

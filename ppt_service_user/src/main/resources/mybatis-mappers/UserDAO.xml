@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.puputuan.dao.UserDAO">
+    <resultMap id="BaseResultMap" type="com.puputuan.model.User">
+        <id column="pu_user_id" property="id" jdbcType="BIGINT"/>
+        <result column="pu_user_user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="pu_user_phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="pu_user_wechat_id" property="wechatId" jdbcType="VARCHAR"/>
+        <result column="pu_user_nick_name" property="nickName" jdbcType="VARCHAR"/>
+        <result column="pu_user_nick_name_chr" property="nickNameChr" jdbcType="VARCHAR"/>
+        <result column="pu_user_identify" property="identify" jdbcType="VARCHAR"/>
+        <result column="pu_user_sex" property="sex" jdbcType="VARCHAR"/>
+        <result column="pu_user_sign" property="sign" jdbcType="LONGVARCHAR"/>
+        <result column="pu_user_birthday" property="birthday" jdbcType="TIMESTAMP"/>
+        <result column="pu_user_head_id" property="headId" jdbcType="BIGINT"/>
+        <result column="pu_user_constellation" property="constellation" jdbcType="VARCHAR"/>
+        <result column="pu_user_province_id" property="provinceId" jdbcType="INTEGER"/>
+        <result column="pu_user_province" property="province" jdbcType="VARCHAR"/>
+        <result column="pu_user_city_id" property="cityId" jdbcType="INTEGER"/>
+        <result column="pu_user_city" property="city" jdbcType="VARCHAR"/>
+        <result column="pu_user_area_id" property="areaId" jdbcType="INTEGER"/>
+        <result column="pu_user_area" property="area" jdbcType="VARCHAR"/>
+        <result column="pu_user_type" property="type" jdbcType="INTEGER"/>
+        <result column="pu_user_device" property="device" jdbcType="INTEGER"/>
+        <result column="pu_user_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="pu_user_friend_update_time" property="friendUpdateTime" jdbcType="TIMESTAMP"/>
+
+        <association property="userBase" column="pu_user_id"
+                     javaType="com.puputuan.generic.userbase.model.UserBase"
+                     resultMap="com.puputuan.generic.userbase.dao.UserBaseDAO.BaseResultMap"/>
+
+        <collection property="jobList" resultMap="com.puputuan.dao.JobDAO.BaseResultMap"
+                    ofType="com.puputuan.model.Job"
+                    javaType="java.util.List"/>
+        <collection property="interestList" resultMap="com.puputuan.dao.InterestDAO.BaseResultMap"
+                    ofType="com.puputuan.model.Interest"
+                    javaType="java.util.List"/>
+        <collection property="fancyList" resultMap="com.puputuan.dao.FancyDAO.BaseResultMap"
+                    ofType="com.puputuan.model.Fancy"
+                    javaType="java.util.List"/>
+        <!--<collection property="album" resultMap="com.puputuan.dao.PhotoDAO.BaseResultMap"-->
+                    <!--ofType="com.puputuan.model.Photo"-->
+                    <!--javaType="java.util.List"/>-->
+
+    </resultMap>
+
+
+    <sql id="tableProperty">
+        pu_user.id as pu_user_id,
+        pu_user.user_id as pu_user_user_id,
+        pu_user.phone as pu_user_phone,
+        pu_user.wechat_id as pu_user_wechat_id,
+        pu_user.nick_name as pu_user_nick_name,
+        pu_user.nick_name_chr as pu_user_nick_name_chr,
+        pu_user.identify as pu_user_identify,
+        pu_user.sex as pu_user_sex,
+        pu_user.sign as pu_user_sign,
+        pu_user.birthday as pu_user_birthday,
+        pu_user.head_id as pu_user_head_id,
+        pu_user.constellation as pu_user_constellation,
+        pu_user.province_id as pu_user_province_id,
+        pu_user.province as pu_user_province,
+        pu_user.city_id as pu_user_city_id,
+        pu_user.city as pu_user_city,
+        pu_user.area_id as pu_user_area_id,
+        pu_user.area as pu_user_area,
+        pu_user.type as pu_user_type,
+        pu_user.device as pu_user_device,
+        pu_user.create_time as pu_user_create_time,
+        pu_user.friend_update_time as pu_user_friend_update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 -->
+        LEFT JOIN pu_job ON pu_job.id = pu_job_user.job_id AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 -->
+        LEFT JOIN pu_interest ON pu_interest.id = pu_interest_user.interest_id AND pu_interest.status = 1
+        <!--LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id-->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        WHERE pu_user.id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectParam" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 -->
+        LEFT JOIN pu_job ON pu_job.id = pu_job_user.job_id AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 -->
+        LEFT JOIN pu_interest ON pu_interest.id = pu_interest_user.interest_id AND pu_interest.status = 1
+        <!--LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id-->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and pu_user.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="userId != null">
+                and pu_user.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="phone != null">
+                and pu_user.phone = #{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="phones != null">
+                and pu_user.phone IN (
+                <foreach collection="phones" item="item" index="index" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="filterShieldPhone != null">
+                and pu_user.user_id not in (
+                SELECT pu_setting.user_id from pu_setting WHERE pu_setting.shield_phone_on = '0'
+                )
+            </if>
+            <if test="wechatId != null">
+                and pu_user.wechat_id = #{wechatId,jdbcType=VARCHAR}
+            </if>
+            <if test="nickName != null">
+                and pu_user.nick_name like concat('%',#{nickName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="identify != null">
+                and pu_user.identify like concat('%', #{identify,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="sex != null">
+                and pu_user.sex = #{sex,jdbcType=VARCHAR}
+            </if>
+            <if test="sign != null">
+                and pu_user.sign = #{sign,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="birthday != null">
+                and pu_user.birthday = #{birthday,jdbcType=TIMESTAMP}
+            </if>
+            <if test="headId != null">
+                and pu_user.head_id = #{headId,jdbcType=BIGINT}
+            </if>
+            <if test="constellation != null">
+                and pu_user.constellation = #{constellation,jdbcType=VARCHAR}
+            </if>
+            <if test="provinceId != null">
+                and pu_user.province_id = #{provinceId,jdbcType=INTEGER}
+            </if>
+            <if test="cityId != null">
+                and pu_user.city_id = #{cityId,jdbcType=INTEGER}
+            </if>
+            <if test="areaId != null">
+                and pu_user.area_id = #{areaId,jdbcType=INTEGER}
+            </if>
+            <if test="type != null">
+                and pu_user.type = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="device != null">
+                and pu_user.device = #{device,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and pu_user.create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+        order by pu_user.id desc
+    </select>
+
+    <select id="selectOne" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 -->
+        LEFT JOIN pu_job ON pu_job.id = pu_job_user.job_id AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 -->
+        LEFT JOIN pu_interest ON pu_interest.id = pu_interest_user.interest_id AND pu_interest.status = 1
+        <!--LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id-->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and pu_user.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="userId != null">
+                and pu_user.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="phone != null">
+                and pu_user.phone = #{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="wechatId != null">
+                and pu_user.wechat_id = #{wechatId,jdbcType=VARCHAR}
+            </if>
+            <if test="nickName != null">
+                and pu_user.nick_name = #{nickName,jdbcType=VARCHAR}
+            </if>
+            <if test="identify != null">
+                and pu_user.identify = #{identify,jdbcType=VARCHAR}
+            </if>
+            <if test="sex != null">
+                and pu_user.sex = #{sex,jdbcType=VARCHAR}
+            </if>
+            <if test="sign != null">
+                and pu_user.sign = #{sign,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="birthday != null">
+                and pu_user.birthday = #{birthday,jdbcType=TIMESTAMP}
+            </if>
+            <if test="headId != null">
+                and pu_user.head_id = #{headId,jdbcType=BIGINT}
+            </if>
+            <if test="constellation != null">
+                and pu_user.constellation = #{constellation,jdbcType=VARCHAR}
+            </if>
+            <if test="provinceId != null">
+                and pu_user.province_id = #{provinceId,jdbcType=INTEGER}
+            </if>
+            <if test="cityId != null">
+                and pu_user.city_id = #{cityId,jdbcType=INTEGER}
+            </if>
+            <if test="areaId != null">
+                and pu_user.area_id = #{areaId,jdbcType=INTEGER}
+            </if>
+            <if test="type != null">
+                and pu_user.type = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="device != null">
+                and pu_user.device = #{device,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and pu_user.create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+        order by pu_user.identify desc
+        limit 1
+    </select>
+
+    <update id="updateByUserId" parameterType="com.puputuan.model.User">
+        update pu_user
+        <set>
+            <if test="nickName != null">
+                pu_user.nick_name = #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="nickNameChr != null">
+                pu_user.nick_name_chr = #{nickNameChr,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                pu_user.phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="wechatId != null">
+                pu_user.wechat_id = #{wechatId,jdbcType=VARCHAR},
+            </if>
+            <if test="identify != null">
+                pu_user.identify = #{identify,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                pu_user.sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="sign != null">
+                pu_user.sign = #{sign,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="birthday != null">
+                pu_user.birthday = #{birthday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="headId != null">
+                pu_user.head_id = #{headId,jdbcType=BIGINT},
+            </if>
+            <if test="constellation != null">
+                pu_user.constellation = #{constellation,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceId != null">
+                pu_user.province_id = #{provinceId,jdbcType=INTEGER},
+            </if>
+            <if test="province != null">
+                pu_user.province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="cityId != null">
+                pu_user.city_id = #{cityId,jdbcType=INTEGER},
+            </if>
+            <if test="city != null">
+                pu_user.city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="areaId != null">
+                pu_user.area_id = #{areaId,jdbcType=INTEGER},
+            </if>
+            <if test="area != null">
+                pu_user.area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                pu_user.type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="device != null">
+                pu_user.device = #{device,jdbcType=INTEGER},
+            </if>
+            <if test="friendUpdateTime != null">
+                pu_user.friend_update_time = #{friendUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where pu_user.user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 -->
+        LEFT JOIN pu_job ON pu_job.id = pu_job_user.job_id AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 -->
+        LEFT JOIN pu_interest ON pu_interest.id = pu_interest_user.interest_id AND pu_interest.status = 1
+        <!--LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id-->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        where pu_user.user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 根据param中携带的参数查询用户 -->
+    <select id="selectByParam" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 -->
+        LEFT JOIN pu_job ON pu_job.id = pu_job_user.job_id AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 -->
+        LEFT JOIN pu_interest ON pu_interest.id = pu_interest_user.interest_id AND pu_interest.status = 1
+        <!-- LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id -->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and pu_user.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="userId != null">
+                and pu_user.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="phone != null">
+                and pu_user.phone = #{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="wechatId != null">
+                and pu_user.wechat_id = #{wechatId,jdbcType=VARCHAR}
+            </if>
+            <if test="nickName != null">
+                and pu_user.nick_name = #{nickName,jdbcType=VARCHAR}
+            </if>
+            <if test="identify != null">
+                and pu_user.identify = #{identify,jdbcType=VARCHAR}
+            </if>
+            <if test="sex != null">
+                and pu_user.sex = #{sex,jdbcType=VARCHAR}
+            </if>
+            <if test="sign != null">
+                and pu_user.sign = #{sign,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="birthday != null">
+                and pu_user.birthday = #{birthday,jdbcType=TIMESTAMP}
+            </if>
+            <if test="headId != null">
+                and pu_user.head_id = #{headId,jdbcType=BIGINT}
+            </if>
+            <if test="constellation != null">
+                and pu_user.constellation = #{constellation,jdbcType=VARCHAR}
+            </if>
+            <if test="provinceId != null">
+                and pu_user.province_id = #{provinceId,jdbcType=INTEGER}
+            </if>
+            <if test="cityId != null">
+                and pu_user.city_id = #{cityId,jdbcType=INTEGER}
+            </if>
+            <if test="areaId != null">
+                and pu_user.area_id = #{areaId,jdbcType=INTEGER}
+            </if>
+            <if test="type != null">
+                and pu_user.type = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="device != null">
+                and pu_user.device = #{device,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and pu_user.create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+        order by pu_user.id desc
+    </select>
+
+
+    <!-- 查询自己的个人兴趣，并且带有兴致职业，其中包含了 自己没有选择但是是属于系统的兴趣职业 -->
+    <select id="selectByUserIdWithSystem" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        if(pu_interest_user.interest_id = pu_interest.id, TRUE, FALSE) AS pu_interest_have_select,
+        if(pu_job_user.job_id = pu_job.id, TRUE, FALSE) AS pu_job_have_select
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 以及系统的兴趣 -->
+        LEFT JOIN pu_job ON (pu_job.id = pu_job_user.job_id OR pu_job.type = 1) AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 以及系统的职业 -->
+        LEFT JOIN pu_interest ON (pu_interest.id = pu_interest_user.interest_id OR pu_interest.type = 1) AND
+        pu_interest.status = 1
+        <!-- LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id -->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        where pu_user.user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 根据昵称或identity查询用户 -->
+    <select id="selectByIdentifyName" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>,
+        <!--include refid="com.puputuan.generic.districtmodule.dao.ProvinceDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.CityDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.districtmodule.dao.AreaDAO.tableProperty"/,-->
+        <include refid="com.puputuan.dao.JobDAO.tableProperty"/>,
+        <include refid="com.puputuan.dao.InterestDAO.tableProperty"/>,
+        <!--<include refid="com.puputuan.dao.PhotoDAO.tableProperty"/>,-->
+        <include refid="com.puputuan.dao.FancyDAO.tableProperty"/>
+        FROM pu_user
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = pu_user.user_id
+        <!--LEFT JOIN geetion_province ON geetion_province.code = pu_user.province_id
+        LEFT JOIN geetion_city ON geetion_city.code = pu_user.city_id
+        LEFT JOIN geetion_area ON geetion_area.code = pu_user.area_id-->
+        LEFT JOIN pu_job_user ON pu_job_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的兴趣 -->
+        LEFT JOIN pu_job ON pu_job.id = pu_job_user.job_id AND pu_job.status = 1
+        LEFT JOIN pu_interest_user ON pu_interest_user.user_id = pu_user.user_id
+        <!-- 查询没有被屏蔽的职业 -->
+        LEFT JOIN pu_interest ON pu_interest.id = pu_interest_user.interest_id AND pu_interest.status = 1
+        <!-- LEFT JOIN pu_photo ON pu_photo.user_id = pu_user.user_id -->
+        <!-- 查询没有被屏蔽的喜爱夜蒲类型 -->
+        LEFT JOIN pu_fancy_user ON pu_fancy_user.user_id = pu_user.user_id
+        LEFT JOIN pu_fancy ON pu_fancy.id = pu_fancy_user.fancy_id AND pu_fancy.status = 1
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="nickName != null">
+                or pu_user.nick_name = #{nickName,jdbcType=VARCHAR}
+            </if>
+            <if test="identify != null">
+                or pu_user.identify = #{identify,jdbcType=VARCHAR}
+            </if>
+        </trim>
+        order by pu_user.id desc
+    </select>
+
+</mapper>

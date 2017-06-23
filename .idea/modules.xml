@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ppt_app_info/ppt-app-info.iml" filepath="$PROJECT_DIR$/ppt_app_info/ppt-app-info.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_app_video/ppt-app-video.iml" filepath="$PROJECT_DIR$/ppt_app_video/ppt-app-video.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_service_user/ppt-service-user.iml" filepath="$PROJECT_DIR$/ppt_service_user/ppt-service-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_app_info/ppt_app_info.iml" filepath="$PROJECT_DIR$/ppt_app_info/ppt_app_info.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_common_client/ppt_common_client.iml" filepath="$PROJECT_DIR$/ppt_common_client/ppt_common_client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_common_core/ppt_common_core.iml" filepath="$PROJECT_DIR$/ppt_common_core/ppt_common_core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_common_sms/ppt_common_sms.iml" filepath="$PROJECT_DIR$/ppt_common_sms/ppt_common_sms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ppt_parent_pom/ppt_parent_pom.iml" filepath="$PROJECT_DIR$/ppt_parent_pom/ppt_parent_pom.iml" />
+    </modules>
+  </component>
+</project>

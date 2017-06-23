@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ppt_app_info" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ppt_app_video" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ppt_common_client" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ppt_common_core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ppt_common_sms" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ppt_parent_pom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ppt_service_user" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

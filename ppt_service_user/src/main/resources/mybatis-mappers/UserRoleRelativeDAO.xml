@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.puputuan.generic.permission.dao.UserRoleRelativeDAO">
+
+    <resultMap id="BaseResultMap" type="com.puputuan.generic.permission.model.UserRoleRelative">
+
+        <id column="geetion_user_role_relative_id" property="id" jdbcType="BIGINT"/>
+        <result column="geetion_user_role_relative_user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="geetion_user_role_relative_role_id" property="roleId" jdbcType="BIGINT"/>
+
+    </resultMap>
+
+    <sql id="tableProperty">
+        geetion_user_role_relative.id AS geetion_user_role_relative_id,
+        geetion_user_role_relative.user_id AS geetion_user_role_relative_user_id,
+        geetion_user_role_relative.role_id AS geetion_user_role_relative_role_id
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>
+        FROM geetion_user_role_relative
+        WHERE geetion_user_role_relative.id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectParam" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="tableProperty"/>
+        FROM geetion_user_role_relative
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_user_role_relative.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="userId != null">
+                AND geetion_user_role_relative.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="role_id != null">
+                AND geetion_user_role_relative.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectOne" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="tableProperty"/>
+        FROM geetion_user_role_relative
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_user_role_relative.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="userId != null">
+                AND geetion_user_role_relative.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="role_id != null">
+                AND geetion_user_role_relative.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+        </trim>
+        ORDER BY geetion_user_role_relative.id ASC limit 1
+    </select>
+
+    <select id="selectAllUserNotRole" resultMap="com.puputuan.generic.userbase.dao.UserBaseDAO.BaseResultMap">
+        SELECT
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>
+        FROM geetion_user_base
+        WHERE geetion_user_base.id NOT IN (
+        SELECT geetion_user_role_relative.user_id FROM geetion_user_role_relative
+        )
+    </select>
+
+    <select id="selectAllUserByRoleId" resultMap="com.puputuan.generic.userbase.dao.UserBaseDAO.BaseResultMap"
+            parameterType="java.lang.Long">
+        SELECT
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>
+        FROM geetion_user_base
+        LEFT JOIN geetion_user_role_relative ON geetion_user_base.id = geetion_user_role_relative.user_id
+        LEFT JOIN geetion_role ON geetion_user_role_relative.role_id = geetion_role.id
+        <trim prefix="where">
+            <if test="roleId != null">
+                geetion_user_role_relative.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+        </trim>
+        order by geetion_user_base.create_time desc
+    </select>
+
+    <select id="selectAllUserByRole" resultMap="com.puputuan.generic.userbase.dao.UserBaseDAO.BaseResultMap"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="com.puputuan.generic.userbase.dao.UserBaseDAO.tableProperty"/>
+        FROM geetion_user_base
+        LEFT JOIN geetion_user_role_relative ON geetion_user_base.id = geetion_user_role_relative.user_id
+        LEFT JOIN geetion_role ON geetion_user_role_relative.role_id = geetion_role.id
+        <trim prefix="where">
+            <if test="role != null">
+                geetion_role.role = #{role,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </select>
+
+    <delete id="deleteBatchByUserId" parameterType="java.lang.Long">
+        DELETE
+        FROM geetion_user_role_relative
+        where geetion_user_role_relative.user_id in
+        <foreach collection="userIds" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRoleBatchByUserId" parameterType="java.util.Map">
+        DELETE
+        FROM geetion_user_role_relative
+        where geetion_user_role_relative.user_id in
+        <foreach collection="userIds" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        <if test="roleId != null">
+            and geetion_user_role_relative.role_id = #{roleId,jdbcType=BIGINT}
+        </if>
+    </delete>
+
+    <insert id="insertRoleByUserIdBatch" parameterType="java.util.Map"
+            useGeneratedKeys="true">
+        INSERT INTO geetion_user_role_relative
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                user_id,role_id
+        </trim>
+        values
+        <foreach collection="userIds" item="item" index="index" separator=",">
+            (#{item,jdbcType=BIGINT},#{roleId,jdbcType=BIGINT})
+        </foreach>
+
+    </insert>
+
+    <select id="selectRoleByUserId" resultMap="com.puputuan.generic.permission.dao.RoleDAO.BaseResultMap"
+            parameterType="java.lang.Long">
+        SELECT
+        <include refid="com.puputuan.generic.permission.dao.RoleDAO.tableProperty"/>
+        FROM geetion_user_role_relative
+        LEFT JOIN geetion_user_base ON geetion_user_base.id = geetion_user_role_relative.user_id
+        LEFT JOIN geetion_role ON geetion_user_role_relative.role_id = geetion_role.id
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </select>
+
+
+</mapper>

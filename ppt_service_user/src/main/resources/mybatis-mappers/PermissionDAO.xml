@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.puputuan.generic.permission.dao.PermissionDAO">
+
+    <resultMap id="BaseResultMap" type="com.puputuan.generic.permission.model.Permission">
+
+        <id column="geetion_permission_id" property="id" jdbcType="BIGINT"/>
+        <result column="geetion_permission_permission" property="permission" jdbcType="VARCHAR"/>
+        <result column="geetion_permission_name" property="name" jdbcType="VARCHAR"/>
+        <result column="geetion_permission_extra" property="extra" jdbcType="VARCHAR"/>
+        <result column="geetion_permission_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+
+    </resultMap>
+
+    <sql id="tableProperty">
+        geetion_permission.id AS geetion_permission_id,
+        geetion_permission.permission AS geetion_permission_permission,
+        geetion_permission.name AS geetion_permission_name,
+        geetion_permission.extra AS geetion_permission_extra,
+        geetion_permission.create_time AS geetion_permission_create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>
+        FROM geetion_permission
+        WHERE geetion_permission.id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectParam" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="tableProperty"/>
+        FROM geetion_permission
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_permission.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="permission != null">
+                AND geetion_permission.permission = #{permission,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                AND geetion_permission.name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="extra != null">
+                AND geetion_permission.extra = #{extra,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                AND geetion_permission.create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+        order by geetion_permission.create_time
+    </select>
+
+    <select id="selectOne" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="tableProperty"/>
+        FROM geetion_permission
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_permission.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="permission != null">
+                AND geetion_permission.permission = #{permission,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                AND geetion_permission.name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="extra != null">
+                AND geetion_permission.extra = #{extra,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                AND geetion_permission.create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+        order by geetion_permission.create_time asc limit 1
+    </select>
+</mapper>

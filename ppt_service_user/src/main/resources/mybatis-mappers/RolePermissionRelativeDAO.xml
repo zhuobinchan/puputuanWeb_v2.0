@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.puputuan.generic.permission.dao.RolePermissionRelativeDAO">
+
+    <resultMap id="BaseResultMap" type="com.puputuan.generic.permission.model.RolePermissionRelative">
+
+        <id column="geetion_role_permission_relative_id" property="id" jdbcType="BIGINT"/>
+        <result column="geetion_role_permission_relative_role_id" property="roleId" jdbcType="BIGINT"/>
+        <result column="geetion_role_permission_relative_permission_id" property="permissionId" jdbcType="BIGINT"/>
+
+        <association property="role" column="geetion_role_permission_relative_role_id"
+                     javaType="com.puputuan.generic.permission.model.Role"
+                     resultMap="com.puputuan.generic.permission.dao.RoleDAO.BaseResultMap"/>
+
+        <association property="permission" column="geetion_role_permission_relative_permission_id"
+                     javaType="com.puputuan.generic.permission.model.Permission"
+                     resultMap="com.puputuan.generic.permission.dao.PermissionDAO.BaseResultMap"/>
+    </resultMap>
+
+    <sql id="tableProperty">
+        geetion_role_permission_relative.id AS geetion_role_permission_relative_id,
+        geetion_role_permission_relative.role_id AS geetion_role_permission_relative_role_id,
+        geetion_role_permission_relative.permission_id AS geetion_role_permission_relative_permission_id
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.PermissionDAO.tableProperty"/>
+        FROM geetion_role_permission_relative
+        LEFT JOIN geetion_permission ON geetion_role_permission_relative.permission_id = geetion_permission.id
+        WHERE geetion_role_permission_relative.id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectParam" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.PermissionDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.RoleDAO.tableProperty"/>
+        FROM geetion_role_permission_relative
+        LEFT JOIN geetion_permission ON geetion_role_permission_relative.permission_id = geetion_permission.id
+        LEFT JOIN geetion_role ON geetion_role_permission_relative.role_id = geetion_role.id
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_role_permission_relative.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="role_id != null">
+                AND geetion_role_permission_relative.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+            <if test="permission_id != null">
+                AND geetion_role_permission_relative.permission_id = #{permissionId,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </select>
+
+
+    <select id="selectOne" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.PermissionDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.RoleDAO.tableProperty"/>
+        FROM geetion_role_permission_relative
+        LEFT JOIN geetion_permission ON geetion_role_permission_relative.permission_id = geetion_permission.id
+        LEFT JOIN geetion_role ON geetion_role_permission_relative.role_id = geetion_role.id
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_role_permission_relative.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="role_id != null">
+                AND geetion_role_permission_relative.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+            <if test="permission_id != null">
+                AND geetion_role_permission_relative.permission_id = #{permissionId,jdbcType=BIGINT}
+            </if>
+        </trim>
+        ORDER BY geetion_role_permission_relative.id ASC limit 1
+    </select>
+
+
+    <delete id="deletePermissionFromRole" parameterType="java.util.Map">
+        DELETE
+        FROM geetion_role_permission_relative
+        WHERE geetion_role_permission_relative.permission_id IN
+        <foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        <if test="roleId != null">
+            and geetion_role_permission_relative.role_id = #{roleId,jdbcType=BIGINT}
+        </if>
+
+    </delete>
+
+    <insert id="insertPermissionToRole" parameterType="java.util.Map"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO geetion_role_permission_relative
+        ( role_id,permission_id)
+        <foreach collection="list" index="index" item="item" separator="union all">
+            select #{roleId,jdbcType=BIGINT}, #{item,jdbcType=BIGINT} from DUAL
+        </foreach>
+    </insert>
+
+    <select id="selectAllRoleContainPermission"
+            parameterType="com.puputuan.generic.permission.model.Permission"
+            resultMap="com.puputuan.generic.permission.dao.RoleDAO.BaseResultMap">
+
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.RoleDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.PermissionDAO.tableProperty"/>
+        FROM geetion_role_permission_relative
+        LEFT JOIN geetion_role ON geetion_role.id = geetion_role_permission_relative.role_id
+        LEFT JOIN geetion_permission ON geetion_permission.id = geetion_role_permission_relative.permission_id
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_permission.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="permission != null">
+                AND geetion_permission.permission = #{permission,jdbcType=VARCHAR}
+            </if>
+            <if test="extra != null">
+                AND geetion_permission.extra = #{extra,jdbcType=VARCHAR}
+            </if>
+        </trim>
+
+    </select>
+
+
+    <select id="selectAllPermissionBelongRole"
+            parameterType="com.puputuan.generic.permission.model.Role"
+            resultMap="com.puputuan.generic.permission.dao.PermissionDAO.BaseResultMap">
+
+        SELECT
+        <include refid="tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.RoleDAO.tableProperty"/>,
+        <include refid="com.puputuan.generic.permission.dao.PermissionDAO.tableProperty"/>
+        FROM geetion_role_permission_relative
+        LEFT JOIN geetion_role ON geetion_role.id = geetion_role_permission_relative.role_id
+        LEFT JOIN geetion_permission ON geetion_permission.id = geetion_role_permission_relative.permission_id
+        <trim prefix="WHERE" prefixOverrides="and|or">
+            <if test="id != null">
+                geetion_role.id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="role != null">
+                AND geetion_role.role = #{role,jdbcType=VARCHAR}
+            </if>
+            <if test="extra != null">
+                AND geetion_role.extra = #{extra,jdbcType=VARCHAR}
+            </if>
+        </trim>
+
+    </select>
+
+
+</mapper>

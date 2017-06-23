@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ppt_common_sms:war">
+    <output-path>$PROJECT_DIR$/ppt_common_sms/target</output-path>
+    <root id="archive" name="ppt-common-sms.war">
+      <element id="artifact" artifact-name="ppt_common_sms:war exploded" />
+    </root>
+  </artifact>
+</component>

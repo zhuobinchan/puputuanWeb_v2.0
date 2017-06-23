@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ppt-app-video:war">
+    <output-path>$PROJECT_DIR$/ppt_app_video/target</output-path>
+    <root id="archive" name="ppt-app-video.war">
+      <element id="artifact" artifact-name="ppt-app-video:war exploded" />
+    </root>
+  </artifact>
+</component>
